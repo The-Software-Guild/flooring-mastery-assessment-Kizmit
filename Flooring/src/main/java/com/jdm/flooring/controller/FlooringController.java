@@ -31,7 +31,8 @@ public class FlooringController {
                         displayOrdersByDate();
                         break;
                     case 2:
-                        //Add an order
+                        createNewOrder();
+                        break;
                     case 3:
                         //Edit an order
                     case 4:
@@ -55,6 +56,15 @@ public class FlooringController {
             view.displayOrders(service.getOrdersByDate(view.getDate()));
         }
         catch(DateFormatException e){
+            view.displayErrorMessage(e.getMessage());
+        }
+    }
+
+    private void createNewOrder() {
+        try{
+            service.addOrder(view.getDate(), view.getName(), view.getState(), view.getProductType(), view.getArea());
+        }
+        catch(Exception e){
             view.displayErrorMessage(e.getMessage());
         }
     }

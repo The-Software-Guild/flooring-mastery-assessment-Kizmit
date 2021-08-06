@@ -31,15 +31,13 @@ import java.util.stream.Collectors;
  * 
  */
 public class FlooringDaoFileImpl implements FlooringDao {
-    private HashMap<String, Order> backupOrdersMap = new HashMap<>();
     private HashMap<String, Order> ordersMap = new HashMap<>();
     private HashMap<String, Product> productMap = new HashMap<>();
     private HashMap<String, Tax> taxMap = new HashMap<>();
-    private final String ORDERS_FILE, PRODUCT_FILE, TAX_FILE, DAILY_ORDER_FILE;
+    private final String PRODUCT_FILE, TAX_FILE, DAILY_ORDER_FILE;
     private static final String DELIMITER = "::";
     
     public FlooringDaoFileImpl(String orderFile, String productFile, String taxFile){
-        this.ORDERS_FILE = orderFile;
         this.DAILY_ORDER_FILE = "Orders_" + LocalDate.now().format(DateTimeFormatter.ofPattern("MMddyyyy")) + ".txt";
         this.PRODUCT_FILE = productFile;
         this.TAX_FILE = taxFile;

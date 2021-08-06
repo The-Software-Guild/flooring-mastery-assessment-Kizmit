@@ -12,7 +12,9 @@ import java.util.List;
 public interface FlooringServiceLayer {
 
     public List<Order> getOrdersByDate(String date) throws DateFormatException;
-
+    
+    public Order addOrder(String date, String customerName, String state, String productType, String area);
+    
     public void importAllData() throws FlooringDaoException;
     
 }

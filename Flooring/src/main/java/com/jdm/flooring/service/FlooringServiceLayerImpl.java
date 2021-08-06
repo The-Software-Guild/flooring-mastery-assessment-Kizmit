@@ -48,4 +48,9 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
         
     }
 
+    @Override
+    public Order addOrder(String date, String customerName, String state, String productType, String area) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

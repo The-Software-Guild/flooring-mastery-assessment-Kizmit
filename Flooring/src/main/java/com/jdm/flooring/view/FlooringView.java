@@ -1,6 +1,7 @@
 package com.jdm.flooring.view;
 
 import com.jdm.flooring.dto.Order;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -51,5 +52,20 @@ public class FlooringView {
     public void displayErrorMessage(String message) {
         io.print(message);
     }
-
+    
+    public String getName(){
+        return io.readString("Enter your name: ");
+    }
+    
+    public String getState(){
+        return io.readString("Enter your state: ");
+    }
+    
+    public String getProductType(){
+        return io.readString("Enter the product type you wish to purchase: ");
+    }
+    
+    public BigDecimal getArea(){
+        return new BigDecimal(io.readString("Enter the amount you'd like to purchase in square feet: "));
+    }
 }

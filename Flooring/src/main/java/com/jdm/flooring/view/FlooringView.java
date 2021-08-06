@@ -2,6 +2,7 @@ package com.jdm.flooring.view;
 
 import com.jdm.flooring.dto.Order;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -31,14 +32,24 @@ public class FlooringView {
     }
 
     public void displayOrders(List<Order> orders) {
-        String tableHeader = String.format("%-15s%-10s%-30s%-20s%-45s%-10s", "Order Number",
+        String tableHeader = String.format("%-15s%-15s%-30s%-20s%-45s%-10s", "Order Number",
                 "Date", "Customer Name", "State", "Product Type", "Area");
         io.print(tableHeader);
-        for(order : )
+        for(Order order : orders){
+            String fOrderStr = String.format("%-15s%-15s%-30s%-20s%-45s%-10s Sq Ft", order.getOrderNumber(),
+                order.getOrderDate().format(DateTimeFormatter.ofPattern("MM-dd-yyyy")), order.getCustomerName(), order.getState(),
+                order.getProductType(), order.getArea());
+            /*ADD MORE FIELDS TO DISPLAY TO USER ABOUT ORDERS?*/
+            io.print(fOrderStr);
+        }
     }
 
     public LocalDate getDate() {
-        return LocalDate.parse(io.readString("Enter the date of the order(s): yyyy-mm-dd: "));
+        return LocalDate.parse(io.readString("Enter the date of the order(s): mm-dd-yyyy: "), DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+    }
+
+    public void displayErrorMessage(String message) {
+        io.print(message);
     }
 
 }

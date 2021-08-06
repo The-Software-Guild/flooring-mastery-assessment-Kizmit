@@ -17,4 +17,9 @@ public interface FlooringDao {
 
     public List<Order> getOrders(LocalDate date);
     
+    public void importBackupData() throws FlooringDaoException;
+    
+    public void importProductData() throws FlooringDaoException;
+    
+    public void importTaxData() throws FlooringDaoException;
 }

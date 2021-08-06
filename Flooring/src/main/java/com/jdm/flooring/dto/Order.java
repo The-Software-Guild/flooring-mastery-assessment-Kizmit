@@ -17,7 +17,7 @@ import java.time.LocalDate;
  */
 public class Order {
     private String orderNumber, customerName, state, productType;
-    private BigDecimal taxRate, costPerSqFt, laborCostPerSqFt, area;
+    private BigDecimal taxRate, costPerSqFt, laborCostPerSqFt, area, materialCost, laborCost, taxCost, total;
     private LocalDate orderDate;
 
     public Order(String customerName, String state, String productType, LocalDate orderDate, BigDecimal area) {
@@ -26,6 +26,35 @@ public class Order {
         this.productType = productType;
         this.orderDate = orderDate;
         this.area = area;
+        setCalculableValues();
+    }
+    
+    private void setCalculableValues() {
+        this.materialCost = area.multiply(costPerSqFt);
+        this.laborCost = area.multiply(laborCostPerSqFt);
+        BigDecimal subTotal = laborCost.add(materialCost);
+        this.taxCost = subTotal.multiply((taxRate.divide(new BigDecimal("100"))));
+        this.total = subTotal.add(taxCost);
+    }
+    
+    //From file constructor
+    public Order(String orderNumber, String customerName, String state, BigDecimal taxRate, 
+            String productType, BigDecimal area, BigDecimal costPerSqFt, BigDecimal laborCostPerSqFt, 
+            BigDecimal materialCost, BigDecimal laborCost, BigDecimal taxCost, 
+            BigDecimal total, LocalDate orderDate) {
+        this.orderNumber = orderNumber;
+        this.customerName = customerName;
+        this.state = state;
+        this.productType = productType;
+        this.taxRate = taxRate;
+        this.costPerSqFt = costPerSqFt;
+        this.laborCostPerSqFt = laborCostPerSqFt;
+        this.area = area;
+        this.materialCost = materialCost;
+        this.laborCost = laborCost;
+        this.taxCost = taxCost;
+        this.total = total;
+        this.orderDate = orderDate;
     }
 
     public String getOrderNumber() {
@@ -99,6 +128,24 @@ public class Order {
     public void setOrderDate(LocalDate orderDate) {
         this.orderDate = orderDate;
     }
+
+    public BigDecimal getMaterialCost() {
+        return materialCost;
+    }
+
+    public BigDecimal getLaborCost() {
+        return laborCost;
+    }
+
+    public BigDecimal getTaxCost() {
+        return taxCost;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+
     
 
 }

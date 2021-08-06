@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface FlooringServiceLayer {
 
-    public List<Order> displayOrders(LocalDate date);
+    public List<Order> getOrdersByDate(String date) throws DateFormatException;
 
     public void importAllData() throws FlooringDaoException;
     

@@ -15,9 +15,9 @@ import java.util.List;
  */
 public interface FlooringDao {
 
-    public List<Order> getOrders(LocalDate date);
+    public List<Order> getOrdersByDate(LocalDate date);
     
-    public void importBackupData() throws FlooringDaoException;
+    public void importOrderData() throws FlooringDaoException;
     
     public void importProductData() throws FlooringDaoException;
     

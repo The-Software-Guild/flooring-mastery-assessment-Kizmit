@@ -1,6 +1,7 @@
 package com.jdm.flooring.controller;
 
 import com.jdm.flooring.dao.FlooringDaoException;
+import com.jdm.flooring.service.DateFormatException;
 import com.jdm.flooring.service.FlooringServiceLayer;
 import com.jdm.flooring.view.FlooringView;
 
@@ -20,10 +21,9 @@ public class FlooringController {
     }
     
     public void run(){
-        //Load all data into collections from files
         try{
             service.importAllData();
-            //Display menu choices and get a choice
+            
             boolean exit = false;
             while(!exit){
                 switch(view.displayGetMenuChoice()){
@@ -48,12 +48,15 @@ public class FlooringController {
         catch(FlooringDaoException e){
             view.displayErrorMessage(e.getMessage());
         }
-        //Follow through with actions and return to get another menu choice
-        
     }
 
     private void displayOrdersByDate(){
-        view.displayOrders(service.displayOrders(view.getDate()));
+        try{
+            view.displayOrders(service.getOrdersByDate(view.getDate()));
+        }
+        catch(DateFormatException e){
+            view.displayErrorMessage(e.getMessage());
+        }
     }
     
 }

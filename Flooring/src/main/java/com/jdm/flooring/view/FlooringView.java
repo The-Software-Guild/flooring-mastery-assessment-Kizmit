@@ -33,10 +33,10 @@ public class FlooringView {
 
     public void displayOrders(List<Order> orders) {
         String tableHeader = String.format("%-15s%-15s%-30s%-20s%-45s%-10s", "Order Number",
-                "Date", "Customer Name", "State", "Product Type", "Area");
+                "Date", "Customer Name", "State", "Product Type", "Area(SqFT)");
         io.print(tableHeader);
         for(Order order : orders){
-            String fOrderStr = String.format("%-15s%-15s%-30s%-20s%-45s%-10s Sq Ft", order.getOrderNumber(),
+            String fOrderStr = String.format("%-15s%-15s%-30s%-20s%-45s%-10s", order.getOrderNumber(),
                 order.getOrderDate().format(DateTimeFormatter.ofPattern("MM-dd-yyyy")), order.getCustomerName(), order.getState(),
                 order.getProductType(), order.getArea());
             /*ADD MORE FIELDS TO DISPLAY TO USER ABOUT ORDERS?*/
@@ -44,8 +44,8 @@ public class FlooringView {
         }
     }
 
-    public LocalDate getDate() {
-        return LocalDate.parse(io.readString("Enter the date of the order(s): mm-dd-yyyy: "), DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+    public String getDate() {
+        return io.readString("Enter the date of the order(s) (mm-dd-yyyy): ");
     }
 
     public void displayErrorMessage(String message) {

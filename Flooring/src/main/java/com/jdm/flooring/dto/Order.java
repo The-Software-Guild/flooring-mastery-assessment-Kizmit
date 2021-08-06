@@ -19,7 +19,8 @@ public class Order {
     private String orderNumber, customerName, state, productType;
     private BigDecimal taxRate, costPerSqFt, laborCostPerSqFt, area, materialCost, laborCost, taxCost, total;
     private LocalDate orderDate;
-
+    
+    //Constructor for add order
     public Order(String customerName, String state, String productType, LocalDate orderDate, BigDecimal area) {
         this.customerName = customerName;
         this.state = state;
@@ -37,11 +38,11 @@ public class Order {
         this.total = subTotal.add(taxCost);
     }
     
-    //From file constructor
+    //Constructor for file import
     public Order(String orderNumber, String customerName, String state, BigDecimal taxRate, 
             String productType, BigDecimal area, BigDecimal costPerSqFt, BigDecimal laborCostPerSqFt, 
             BigDecimal materialCost, BigDecimal laborCost, BigDecimal taxCost, 
-            BigDecimal total, LocalDate orderDate) {
+            BigDecimal total) {
         this.orderNumber = orderNumber;
         this.customerName = customerName;
         this.state = state;
@@ -54,7 +55,6 @@ public class Order {
         this.laborCost = laborCost;
         this.taxCost = taxCost;
         this.total = total;
-        this.orderDate = orderDate;
     }
 
     public String getOrderNumber() {

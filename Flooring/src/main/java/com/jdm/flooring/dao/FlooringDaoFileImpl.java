@@ -17,8 +17,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -34,11 +34,11 @@ public class FlooringDaoFileImpl implements FlooringDao {
     private HashMap<String, Order> ordersMap = new HashMap<>();
     private HashMap<String, Product> productMap = new HashMap<>();
     private HashMap<String, Tax> taxMap = new HashMap<>();
-    private final String PRODUCT_FILE, TAX_FILE, DAILY_ORDER_FILE;
+    private final String PRODUCT_FILE, TAX_FILE, ORDER_FILE_PREFIX;
     private static final String DELIMITER = "::";
     
     public FlooringDaoFileImpl(String orderFile, String productFile, String taxFile){
-        this.DAILY_ORDER_FILE = "Orders_" + LocalDate.now().format(DateTimeFormatter.ofPattern("MMddyyyy")) + ".txt";
+        this.ORDER_FILE_PREFIX = "Orders_";
         this.PRODUCT_FILE = productFile;
         this.TAX_FILE = taxFile;
     }
@@ -66,7 +66,7 @@ public class FlooringDaoFileImpl implements FlooringDao {
                 while(scanner.hasNextLine()){
                     currentLine = scanner.nextLine();
                     order = unmarshallOrder(currentLine);
-                    String dateString = ordersFile.getName().replace("Orders_", "");
+                    String dateString = ordersFile.getName().replace(ORDER_FILE_PREFIX, "");
                     dateString = dateString.replace(".txt", "");
                     LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("MMddyyyy"));
                     date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
@@ -87,7 +87,6 @@ public class FlooringDaoFileImpl implements FlooringDao {
                 orderTokens[4],new BigDecimal(orderTokens[5]), new BigDecimal(orderTokens[6]), new BigDecimal(orderTokens[7]),
                 new BigDecimal(orderTokens[8]), new BigDecimal(orderTokens[9]),new BigDecimal(orderTokens[10]),
                 new BigDecimal(orderTokens[11]));
-        
         return orderFromFile;
     }
     
@@ -111,7 +110,6 @@ public class FlooringDaoFileImpl implements FlooringDao {
             product = unmarshallProduct(currentLine);
             productMap.put(product.getProductType(), product);
         }
-        
         scanner.close();
     }
     
@@ -140,7 +138,7 @@ public class FlooringDaoFileImpl implements FlooringDao {
         while(scanner.hasNextLine()){
             currentLine = scanner.nextLine();
             tax = unmarshallTax(currentLine);
-            taxMap.put(tax.getStateAbbrev(), tax);
+            taxMap.put(tax.getStateName(), tax);
         }
         
         scanner.close();
@@ -152,9 +150,39 @@ public class FlooringDaoFileImpl implements FlooringDao {
         return taxFromFile;
     }
 
+    @Override
+    public void addOrder(Order newOrder) {
+        //Get the highest order number and create a new one based off of it (by adding 1)
+        Order order = getAllOrders().stream().max(Comparator.comparing(var -> var.getOrderNumber())).get();
+        int orderNumberInt = Integer.parseInt(order.getOrderNumber()) + 1;
+        String newOrderNumber = String.valueOf(orderNumberInt);
+        
+        //Assign the new order number to a newly placed order and add the order to the map
+        newOrder.setOrderNumber(newOrderNumber);
+        ordersMap.put(newOrder.getOrderNumber(), newOrder);
+    }
 
+    @Override
+    public Order createOrder(String date, String customerName, String state, String productType, BigDecimal area) {
+        return new Order(customerName, state, productType, LocalDate.parse(date, DateTimeFormatter.ofPattern("MM-dd-yyyy")), area, 
+                taxMap.get(state).getTaxRate(), productMap.get(productType).getCostPerSqFt(), productMap.get(productType).getLaborCostPerSqFt());
+    }
 
+    @Override
+    public boolean checkTaxCode(String state) {
+        return taxMap.containsKey(state);
+    }
 
+    @Override
+    public List<Product> getProducts() {
+        return new ArrayList<>(productMap.values());
+    }
     
-    
+    @Override
+    public boolean checkProductType(String productType){
+        return productMap.containsKey(productType);
+    }
+
+
+
 }

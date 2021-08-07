@@ -1,6 +1,7 @@
 package com.jdm.flooring.view;
 
 import com.jdm.flooring.dto.Order;
+import com.jdm.flooring.dto.Product;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -58,14 +59,44 @@ public class FlooringView {
     }
     
     public String getState(){
-        return io.readString("Enter your state: ");
+        return io.readString("Enter your state: ").toLowerCase();
     }
     
-    public String getProductType(){
-        return io.readString("Enter the product type you wish to purchase: ");
+    public String getProductType(List<Product> products){
+        String tableHeader = String.format("%-35s%-35s%-35s", "Product Type",
+                "Cost Per Square Foot", "Labor Cost Per Square Foot");
+        io.print(tableHeader);
+        for(Product product : products){
+            String fProductStr = String.format("%-35s$%-35s$%-35s", product.getProductType(),
+                product.getCostPerSqFt(), product.getLaborCostPerSqFt());
+            io.print(fProductStr);
+        }
+        return io.readString("Enter the name of the product type you wish to purchase: ").toLowerCase();
     }
     
-    public BigDecimal getArea(){
-        return new BigDecimal(io.readString("Enter the amount you'd like to purchase in square feet: "));
+    public String getArea(){
+        return io.readString("Enter the amount you'd like to purchase in square feet: ");
+    }
+
+    public void displayOrderSummary(Order order) {
+        String fOrderSummaryStr = String.format("%-15s\n%-30s\n%-45s\n%-10s\n%-10s\n", "Date: " + order.getOrderDate().format(DateTimeFormatter.ofPattern("MM-dd-yyyy")), "Order for: " + order.getCustomerName(), 
+                "Product Type: " + order.getProductType(), "Area(SqFT): " + order.getArea(), "Order total: $" + order.getTotal());
+        io.print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
+        io.print("<<ORDER SUMMARY>>");
+        io.print(fOrderSummaryStr);
+        io.print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
+       
+    }
+
+    public String getOrderConfirmation() {
+        return io.readString("Would you like to place the order? (y/n)").toLowerCase();
+    }
+
+    public void displayOrderNotSubmitted() {
+        io.print("Your order has not been submitted.");
+    }
+
+    public void displayInvalidChoice() {
+        io.print("Invalid input! Please re-enter one of the correct options.");
     }
 }

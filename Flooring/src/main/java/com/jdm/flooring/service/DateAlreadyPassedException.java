@@ -12,9 +12,9 @@ package com.jdm.flooring.service;
  * @email joedmcadams@gmail.com
  * 
  */
-public class DateFormatException extends Exception{
+public class DateAlreadyPassedException extends Exception {
 
-    public DateFormatException(String message) {
+    public DateAlreadyPassedException(String message) {
         super(message);
     }
 

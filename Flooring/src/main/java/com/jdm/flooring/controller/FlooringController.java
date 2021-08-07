@@ -1,9 +1,14 @@
 package com.jdm.flooring.controller;
 
 import com.jdm.flooring.dao.FlooringDaoException;
+import com.jdm.flooring.dto.Order;
+import com.jdm.flooring.service.DateAlreadyPassedException;
 import com.jdm.flooring.service.DateFormatException;
 import com.jdm.flooring.service.FlooringServiceLayer;
+import com.jdm.flooring.service.InvalidInputException;
+import com.jdm.flooring.service.TaxCodeViolationException;
 import com.jdm.flooring.view.FlooringView;
+import static org.springframework.util.StringUtils.capitalize;
 
 /**
  *
@@ -62,9 +67,26 @@ public class FlooringController {
 
     private void createNewOrder() {
         try{
-            service.addOrder(view.getDate(), view.getName(), view.getState(), view.getProductType(), view.getArea());
+            Order order = service.createOrder(view.getDate(), view.getName(), capitalize(view.getState()), capitalize(view.getProductType(service.getProducts())), view.getArea());
+            view.displayOrderSummary(order);
+            boolean valid;
+            do{
+                String yesNo = view.getOrderConfirmation();
+                if(yesNo.equals("y")) {
+                    service.submitOrder(order);
+                    valid = true;
+                }
+                else if(yesNo.equals("n")){
+                    view.displayOrderNotSubmitted();
+                    valid = true;
+                }
+                else{
+                    view.displayInvalidChoice();
+                    valid =  false;
+                }
+            }while(!valid);   
         }
-        catch(Exception e){
+        catch(DateAlreadyPassedException | InvalidInputException | DateFormatException | TaxCodeViolationException e){
             view.displayErrorMessage(e.getMessage());
         }
     }

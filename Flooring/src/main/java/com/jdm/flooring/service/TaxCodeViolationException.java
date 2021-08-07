@@ -12,9 +12,9 @@ package com.jdm.flooring.service;
  * @email joedmcadams@gmail.com
  * 
  */
-public class DateFormatException extends Exception{
+public class TaxCodeViolationException extends Exception {
 
-    public DateFormatException(String message) {
+    public TaxCodeViolationException(String message) {
         super(message);
     }
 

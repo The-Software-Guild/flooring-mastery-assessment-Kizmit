@@ -7,6 +7,7 @@
 package com.jdm.flooring.dto;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 
 /**
@@ -21,13 +22,18 @@ public class Order {
     private LocalDate orderDate;
     
     //Constructor for add order
-    public Order(String customerName, String state, String productType, LocalDate orderDate, BigDecimal area) {
+    public Order(String customerName, String state, String productType, LocalDate orderDate, BigDecimal area, 
+            BigDecimal taxRate, BigDecimal costPerSqFt, BigDecimal laborCostPerSqFt) {
         this.customerName = customerName;
         this.state = state;
         this.productType = productType;
         this.orderDate = orderDate;
         this.area = area;
+        this.taxRate = taxRate;
+        this.costPerSqFt = costPerSqFt;
+        this.laborCostPerSqFt = laborCostPerSqFt;
         setCalculableValues();
+        setBigDecimalScale();
     }
     
     private void setCalculableValues() {
@@ -55,6 +61,7 @@ public class Order {
         this.laborCost = laborCost;
         this.taxCost = taxCost;
         this.total = total;
+        setBigDecimalScale();
     }
 
     public String getOrderNumber() {
@@ -143,6 +150,17 @@ public class Order {
 
     public BigDecimal getTotal() {
         return total;
+    }
+
+    private void setBigDecimalScale() {
+        taxRate = taxRate.setScale(3, RoundingMode.HALF_UP); 
+        costPerSqFt = costPerSqFt.setScale(3, RoundingMode.HALF_UP);
+        laborCostPerSqFt = laborCostPerSqFt.setScale(3, RoundingMode.HALF_UP); 
+        area = area.setScale(2, RoundingMode.HALF_UP); 
+        materialCost = materialCost.setScale(2, RoundingMode.HALF_UP); 
+        laborCost = laborCost.setScale(2, RoundingMode.HALF_UP); 
+        taxCost = taxCost.setScale(2, RoundingMode.HALF_UP); 
+        total = total.setScale(2, RoundingMode.HALF_UP);
     }
 
 

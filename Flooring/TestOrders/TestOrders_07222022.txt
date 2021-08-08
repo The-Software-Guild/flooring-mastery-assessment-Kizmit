@@ -1,0 +1,3 @@
+OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
+6::Test::KY::6.000::Tile::15000.00::3.500::4.150::52500.00::62250.00::6885.00::121635.00
+7::Joe McAdams::WA::9.250::Tile::275.00::3.500::4.150::962.50::1141.25::194.60::2298.35

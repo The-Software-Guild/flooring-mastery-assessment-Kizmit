@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
-import org.springframework.util.FileSystemUtils;
+
 
 
 /**
@@ -30,19 +30,21 @@ import org.springframework.util.FileSystemUtils;
  * 
  */
 public class FlooringDaoFileImpl implements FlooringDao {
-    private HashMap<String, Order> ordersMap = new HashMap<>();
-    private HashMap<String, Product> productMap = new HashMap<>();
-    private HashMap<String, Tax> taxMap = new HashMap<>();
-    private final String PRODUCT_FILE, TAX_FILE, ORDER_FILE_PREFIX ,ORDERS_DIR;
+    private final HashMap<String, Order> ordersMap = new HashMap<>();
+    private final HashMap<String, Product> productMap = new HashMap<>();
+    private final HashMap<String, Tax> taxMap = new HashMap<>();
+    private final String PRODUCT_FILE, TAX_FILE, ORDER_FILE_PREFIX ,ORDERS_DIR, BACKUP_ORDER_FILE;
     private static final String DELIMITER = "::";
     
-    public FlooringDaoFileImpl(String orderFile, String productFile, String taxFile){
-        this.ORDERS_DIR = "Orders";
-        this.ORDER_FILE_PREFIX = "Orders_";
+    public FlooringDaoFileImpl(String ordersDir, String orderFilePrefix, String backupOrderFile, String productFile, String taxFile){
+        this.ORDERS_DIR = ordersDir;
+        this.ORDER_FILE_PREFIX = orderFilePrefix;
         this.PRODUCT_FILE = productFile;
         this.TAX_FILE = taxFile;
+        this.BACKUP_ORDER_FILE = backupOrderFile;
     }
     
+    @Override
     public List<Order> getAllOrders(){
         return new ArrayList<>(ordersMap.values());
     }
@@ -55,9 +57,10 @@ public class FlooringDaoFileImpl implements FlooringDao {
 
     @Override
     public void importOrderData() throws FlooringDaoException{
-        Scanner scanner = null;
+        
         File ordersDir = new File(ORDERS_DIR);
         String currentLine;
+        Scanner scanner;
         Order order;
         try{
             for(File ordersFile : ordersDir.listFiles()){
@@ -73,12 +76,14 @@ public class FlooringDaoFileImpl implements FlooringDao {
                     order.setOrderDate(date);
                     ordersMap.put(order.getOrderNumber(), order);
                 }
+                scanner.close();
             }  
         }
         catch(FileNotFoundException e){
             throw new FlooringDaoException("Couldn't read order files");
         }
-        scanner.close();
+        
+        
     }
 
     private Order unmarshallOrder(String orderAsText){
@@ -92,10 +97,9 @@ public class FlooringDaoFileImpl implements FlooringDao {
     
     @Override
     public void exportOrderData() throws FlooringDaoException{
-        PrintWriter out = null;
+        PrintWriter out;
         String orderAsText;
-        File ordersDir = new File(ORDERS_DIR);
-        boolean result = FileSystemUtils.deleteRecursively(ordersDir);
+
         //Sort orders into HashMap with date as key, list of orders as value
         Map<LocalDate, List<Order>> ordersByDate = getOrdersByDateMap();
         //Per key, write into file with name ORDER_FILE_PREFIX + key as string MMddyyyy 
@@ -106,7 +110,7 @@ public class FlooringDaoFileImpl implements FlooringDao {
                         .format(DateTimeFormatter.ofPattern("MMddyyyy"));
                 
                 //Name the file using the assosciated date
-                out = new PrintWriter(new FileWriter(new File(ordersDir, ORDER_FILE_PREFIX + dateStr + ".txt")));
+                out = new PrintWriter(new FileWriter(new File(ORDERS_DIR, ORDER_FILE_PREFIX + dateStr + ".txt")));
                 
                 //Header line for file
                 out.println("OrderNumber" + DELIMITER + "CustomerName" + DELIMITER + "State" + DELIMITER + "TaxRate" + DELIMITER + "ProductType"
@@ -120,13 +124,13 @@ public class FlooringDaoFileImpl implements FlooringDao {
                     out.println(orderAsText);
                     out.flush();
                 }
+                out.close();
             }
         } 
         catch (IOException e) {
             throw new FlooringDaoException("Couldn't write order files.");
         }
         
-        out.close();
     }
     
     /*OrderNumber::CustomerName::State::TaxRate::ProductType
@@ -276,15 +280,10 @@ public class FlooringDaoFileImpl implements FlooringDao {
 
     @Override
     public void removeOrder(Order order) {
-        ordersMap.remove(order.getOrderNumber());
+        ordersMap.remove(order.getOrderNumber(), order);
     }
 
     private Map<LocalDate, List<Order>> getOrdersByDateMap() {
-        
         return getAllOrders().stream().collect(Collectors.groupingBy(order -> order.getOrderDate()));
-        
     }
-
-
-    
 }

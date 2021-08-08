@@ -16,31 +16,20 @@
           http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
 
     <!-- Bean definitions go here -->
-   <bean id = "userIO" class = "com.jdm.flooring.view.UserIOConsoleImpl"/>
+   <bean id = "daoStub" class = "com.jdm.flooring.service.FlooringDaoStubImpl"/>
    
-   <bean id = "view" class = "com.jdm.flooring.view.FlooringView">
-        <constructor-arg ref = "userIO"/>
-   </bean>
-   
-   <bean id = "dao" class = "com.jdm.flooring.dao.FlooringDaoFileImpl">
-        <constructor-arg value = "Orders"/>
-        <constructor-arg value = "Orders_"/>
-        <constructor-arg value = "DataExport.txt"/>
-        <constructor-arg value = "Products.txt"/>
-        <constructor-arg value = "Taxes.txt"/>
-   </bean>
-   
-   <bean id = "auditDao" class = "com.jdm.flooring.dao.FlooringAuditDaoFileImpl"></bean>
+   <bean id = "auditDaoStub" class = "com.jdm.flooring.service.FlooringAuditDaoStubImpl"/>
    
    <bean id = "service" class = "com.jdm.flooring.service.FlooringServiceLayerImpl">
-        <constructor-arg ref = "dao"/>
-        <constructor-arg ref = "auditDao"/>
+       <constructor-arg ref = "daoStub"/>
+       <constructor-arg ref = "auditDaoStub"/>
    </bean>
    
-   <bean id = "controller" class = "com.jdm.flooring.controller.FlooringController">
-        <constructor-arg ref = "service"/>
-        <constructor-arg ref = "view"/>
+   <bean id = "testDao" class = "com.jdm.flooring.dao.FlooringDaoFileImpl">
+        <constructor-arg value = "TestOrders"/>
+        <constructor-arg value = "TestOrders_"/>
+        <constructor-arg value = "TestDataExport.txt"/>
+        <constructor-arg value = "TestProducts.txt"/>
+        <constructor-arg value = "TestTaxes.txt"/>
    </bean>
-
-
 </beans>

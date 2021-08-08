@@ -1,3 +1,0 @@
-OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total
-2::Doctor Who::WA::9.250::Wood::243.00::5.150::4.750::1251.45::1154.25::216.51::2622.21
-3::Albert Einstein::KY::6.000::Carpet::217.00::2.250::2.100::488.25::455.70::56.64::1000.59

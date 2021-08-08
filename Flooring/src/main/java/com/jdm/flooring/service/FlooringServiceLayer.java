@@ -26,10 +26,12 @@ public interface FlooringServiceLayer {
 
     public Order editOrder(Order order, String name, String capitalize, String capitalize0, String area) throws InvalidInputException, TaxCodeViolationException;
 
-    public void changeOrder(Order order);
+    public void changeOrder(Order order) throws FlooringDaoException;
 
     public Order getOrderToRemove(String date, String orderNumber) throws InvalidInputException, NoSuchItemException;
 
     public void removeOrder(Order order);
+
+    public void exportAllData() throws FlooringDaoException;
     
 }

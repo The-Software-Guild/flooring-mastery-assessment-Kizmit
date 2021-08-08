@@ -39,12 +39,14 @@ public interface FlooringDao {
 
     public Order getOrderByNameDate(String date, String customerName);
 
-    public void updateOrder(Order order);
+    public void updateOrder(Order order) throws FlooringDaoException;
 
     public void recalculateOrder(Order order);
 
     public Order getOrderByOrderNumberDate(String orderNumber, String date);
 
     public void removeOrder(Order order);
+
+    public void exportOrderData() throws FlooringDaoException;
 
 }

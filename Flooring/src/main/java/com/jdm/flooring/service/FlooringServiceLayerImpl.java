@@ -66,7 +66,6 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
         else{
             area = new BigDecimal(areaStr);
         }
-        
         //Validate date format
         if(!date.matches(VALID_DATE_REGEX)) {
             throw new InvalidInputException("Invalid date format");
@@ -186,7 +185,7 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
     }
 
     @Override
-    public void changeOrder(Order order) {
+    public void changeOrder(Order order) throws FlooringDaoException {
         dao.updateOrder(order);
     }
 
@@ -215,6 +214,11 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
     @Override
     public void removeOrder(Order order) {
         dao.removeOrder(order);
+    }
+
+    @Override
+    public void exportAllData() throws FlooringDaoException{
+        dao.exportOrderData();
     }
 
 }

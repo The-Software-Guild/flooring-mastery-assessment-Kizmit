@@ -45,13 +45,16 @@ public class FlooringController {
                         removeOrder();
                         break;
                     case 5:
-                        //Export data
+                        exportBackupData();
+                        break;
                     case 6:
                         exit = true;
                         break;
                         //Quit
                 }
             }
+            
+            service.exportAllData();
         }
         catch(FlooringDaoException e){
             view.displayErrorMessage(e.getMessage());
@@ -160,7 +163,7 @@ public class FlooringController {
                 view.displayErrorMessage(e.getMessage());
                 
             }
-            catch(TaxCodeViolationException e){
+            catch(TaxCodeViolationException | FlooringDaoException e){
                 view.displayErrorMessage(e.getMessage());
                 done = true;
             }
@@ -205,5 +208,9 @@ public class FlooringController {
                             break;
                     }
                 }while(!valid);
+    }
+
+    private void exportBackupData() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

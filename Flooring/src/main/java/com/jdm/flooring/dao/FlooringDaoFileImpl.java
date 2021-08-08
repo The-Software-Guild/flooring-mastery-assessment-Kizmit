@@ -7,6 +7,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -14,8 +17,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
+import org.springframework.util.FileSystemUtils;
 
 
 /**
@@ -28,10 +33,11 @@ public class FlooringDaoFileImpl implements FlooringDao {
     private HashMap<String, Order> ordersMap = new HashMap<>();
     private HashMap<String, Product> productMap = new HashMap<>();
     private HashMap<String, Tax> taxMap = new HashMap<>();
-    private final String PRODUCT_FILE, TAX_FILE, ORDER_FILE_PREFIX;
+    private final String PRODUCT_FILE, TAX_FILE, ORDER_FILE_PREFIX ,ORDERS_DIR;
     private static final String DELIMITER = "::";
     
     public FlooringDaoFileImpl(String orderFile, String productFile, String taxFile){
+        this.ORDERS_DIR = "Orders";
         this.ORDER_FILE_PREFIX = "Orders_";
         this.PRODUCT_FILE = productFile;
         this.TAX_FILE = taxFile;
@@ -50,7 +56,7 @@ public class FlooringDaoFileImpl implements FlooringDao {
     @Override
     public void importOrderData() throws FlooringDaoException{
         Scanner scanner = null;
-        File ordersDir = new File("Orders");
+        File ordersDir = new File(ORDERS_DIR);
         String currentLine;
         Order order;
         try{
@@ -83,6 +89,59 @@ public class FlooringDaoFileImpl implements FlooringDao {
                 new BigDecimal(orderTokens[11]));
         return orderFromFile;
     }
+    
+    @Override
+    public void exportOrderData() throws FlooringDaoException{
+        PrintWriter out = null;
+        String orderAsText;
+        File ordersDir = new File(ORDERS_DIR);
+        boolean result = FileSystemUtils.deleteRecursively(ordersDir);
+        //Sort orders into HashMap with date as key, list of orders as value
+        Map<LocalDate, List<Order>> ordersByDate = getOrdersByDateMap();
+        //Per key, write into file with name ORDER_FILE_PREFIX + key as string MMddyyyy 
+        try{
+            for(List<Order> orderList : ordersByDate.values()){
+                //Get the date assosciated with the current list
+                String dateStr = orderList.get(0).getOrderDate()
+                        .format(DateTimeFormatter.ofPattern("MMddyyyy"));
+                
+                //Name the file using the assosciated date
+                out = new PrintWriter(new FileWriter(new File(ordersDir, ORDER_FILE_PREFIX + dateStr + ".txt")));
+                
+                //Header line for file
+                out.println("OrderNumber" + DELIMITER + "CustomerName" + DELIMITER + "State" + DELIMITER + "TaxRate" + DELIMITER + "ProductType"
+                        + DELIMITER + "Area" + DELIMITER + "CostPerSquareFoot" + DELIMITER + "LaborCostPerSquareFoot"
+                        + DELIMITER + "MaterialCost" + DELIMITER + "LaborCost" + DELIMITER + "Tax" + DELIMITER + "Total");
+                out.flush();
+                
+                //Add each order for given date
+                for(Order order : orderList){
+                    orderAsText = marshallOrder(order);
+                    out.println(orderAsText);
+                    out.flush();
+                }
+            }
+        } 
+        catch (IOException e) {
+            throw new FlooringDaoException("Couldn't write order files.");
+        }
+        
+        out.close();
+    }
+    
+    /*OrderNumber::CustomerName::State::TaxRate::ProductType
+    ::Area::CostPerSquareFoot::LaborCostPerSquareFoot
+    ::MaterialCost::LaborCost::Tax::Total*/
+    private String marshallOrder(Order order){
+        String orderString = order.getOrderNumber() + DELIMITER + order.getCustomerName() + DELIMITER
+                + order.getState() + DELIMITER + order.getTaxRate() + DELIMITER
+                + order.getProductType() + DELIMITER + order.getArea() + DELIMITER 
+                + order.getCostPerSqFt() + DELIMITER + order.getLaborCostPerSqFt() + DELIMITER 
+                + order.getMaterialCost() + DELIMITER + order.getLaborCost() + DELIMITER 
+                + order.getTaxCost() + DELIMITER  + order.getTotal();
+        return orderString;
+    }
+    
     
     @Override
     public void importProductData() throws FlooringDaoException {
@@ -192,8 +251,9 @@ public class FlooringDaoFileImpl implements FlooringDao {
     }
 
     @Override
-    public void updateOrder(Order order) {
+    public void updateOrder(Order order) throws FlooringDaoException {
         ordersMap.replace(order.getOrderNumber(), order);
+        exportOrderData();
     }
 
     @Override
@@ -218,4 +278,13 @@ public class FlooringDaoFileImpl implements FlooringDao {
     public void removeOrder(Order order) {
         ordersMap.remove(order.getOrderNumber());
     }
+
+    private Map<LocalDate, List<Order>> getOrdersByDateMap() {
+        
+        return getAllOrders().stream().collect(Collectors.groupingBy(order -> order.getOrderDate()));
+        
+    }
+
+
+    
 }

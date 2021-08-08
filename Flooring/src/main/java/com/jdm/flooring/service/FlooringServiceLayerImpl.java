@@ -32,11 +32,15 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
     }
     
     @Override
-    public List<Order> getOrdersByDate(String date) throws InvalidInputException{
+    public List<Order> getOrdersByDate(String date) throws InvalidInputException, FlooringDaoException{
         
         //Validate date format
-        if(!date.matches(VALID_DATE_REGEX)) throw new InvalidInputException("Invalid date format");
+        if(!date.matches(VALID_DATE_REGEX)) {
+            auditDao.writeAuditEntry("ATTEMPTED TO DISPLAY ORDERS WITH AN INVALID DATE.");
+            throw new InvalidInputException("Invalid date format");
+        }
         else{
+            auditDao.writeAuditEntry("ORDERS DISPLAYED FOR DATE " + date);
             return dao.getOrdersByDate(LocalDate.parse(date, DateTimeFormatter.ofPattern("MM-dd-yyyy")));
         }
     }
@@ -47,8 +51,10 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
             dao.importOrderData();
             dao.importProductData();
             dao.importTaxData();
+            auditDao.writeAuditEntry("ALL ORDER, PRODUCT AND TAX DATA IMPORTED INTO COLLECTIONS.");
         }
         catch(FlooringDaoException e){
+            auditDao.writeAuditEntry("ORDER, PRODUCT, AND TAX DATA IMPORTS FAILED.");
             throw new FlooringDaoException(e.getMessage());
         }
         
@@ -56,7 +62,7 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
 
     @Override
     public Order createOrder(String date, String customerName, String state, String productType, String areaStr) 
-                            throws DateAlreadyPassedException, InvalidInputException, TaxCodeViolationException{
+                            throws DateAlreadyPassedException, InvalidInputException, TaxCodeViolationException, FlooringDaoException{
         
         BigDecimal area;
         //Convert string to BigDecimal with input validation
@@ -95,22 +101,26 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
         }
         //everything is valid, create object and return it so a summary can be shown
         else{
+            auditDao.writeAuditEntry("ORDER INPUT VALIDATED, CREATING ORDER OBJECT FOR VERIFICATION.");
             return dao.createOrder(date, customerName, state, productType, area);
+            
         }
     }
     
     @Override
-    public String submitOrder(Order order){
+    public String submitOrder(Order order) throws FlooringDaoException{
+        auditDao.writeAuditEntry("ORDER VERIFIED AND SUBMITTED");
         return dao.addOrder(order);
     }
 
     @Override
-    public List<Product> getProducts() {
+    public List<Product> getProducts() throws FlooringDaoException{
+        auditDao.writeAuditEntry("LIST OF ALL PRODUCTS RETRIEVED");
         return dao.getProducts();
     }
 
     @Override
-    public Order getOrderToEdit(String date, String customerName) throws InvalidInputException, NoSuchItemException{
+    public Order getOrderToEdit(String date, String customerName) throws InvalidInputException, NoSuchItemException, FlooringDaoException{
         //Validate date format
         if(!date.matches(VALID_DATE_REGEX)) {
             throw new InvalidInputException("Invalid date format.");
@@ -121,18 +131,22 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
         }
         
         Order order = dao.getOrderByNameDate(date, customerName);
+        auditDao.writeAuditEntry("EDIT RETRIEVAL INPUT VALIDATED, ORDER OBJECT RETRIEVED");
         
         //Does the order exist
         if(order == null){
+            auditDao.writeAuditEntry("RETRIEVED A NULL ORDER OBJECT FOR EDIT.");
             throw new NoSuchItemException("There is not an order on " + date + " under the name " + customerName + ".");
         }
         else{
+            auditDao.writeAuditEntry("ORDER OBJECT FOR EDIT EXISTS AND RETRIEVED.");
             return order;
         }
     }
 
     @Override
-    public Order editOrder(Order order, String customerName, String state, String productType, String areaStr) throws InvalidInputException, TaxCodeViolationException {
+    public Order editOrder(Order order, String customerName, String state, String productType, String areaStr) 
+            throws InvalidInputException, TaxCodeViolationException, FlooringDaoException {
         BigDecimal area;
         
         //Convert string to BigDecimal
@@ -167,6 +181,7 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
         }
         
         else{
+            auditDao.writeAuditEntry("NEW ORDER FIELDS FOR EDIT VALIDATED, SETTING FIELDS.");
             if(!areaStr.equals("")){
                 order.setArea(area);
             }
@@ -179,18 +194,21 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
             if (!customerName.equals("")){
                 order.setCustomerName(customerName);
             }
+            auditDao.writeAuditEntry("FIELDS SET, RECALULATING COST VALUES.");
             dao.recalculateOrder(order);
         }
+        auditDao.writeAuditEntry("RETURNING ORDER OBJECT WITH UPDATED FIELDS AND COST VALUES.");
         return order;
     }
 
     @Override
     public void changeOrder(Order order) throws FlooringDaoException {
+        auditDao.writeAuditEntry("EDITED ORDER BEING ADDED BACK TO COLLECTION IN PLACE OF OLD ORDER.");
         dao.updateOrder(order);
     }
 
     @Override
-    public Order getOrderToRemove(String date, String orderNumber) throws InvalidInputException, NoSuchItemException{
+    public Order getOrderToRemove(String date, String orderNumber) throws InvalidInputException, NoSuchItemException, FlooringDaoException{
         //Validate date format
         if(!date.matches(VALID_DATE_REGEX)) {
             throw new InvalidInputException("Invalid date format.");
@@ -199,31 +217,36 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
         else if(!date.matches(VALID_DATE_REGEX)){
             throw new InvalidInputException("The date entered is invalid.");
         }
-        
+        auditDao.writeAuditEntry("ORDER REMOVAL INPUT VALIDATED, RETRIEVING ORDER OBJECT TO REMOVE.");
         Order order = dao.getOrderByOrderNumberDate(orderNumber, date);
         
         //Does the order exist
         if(order == null){
+            auditDao.writeAuditEntry("RETRIEVED A NULL ORDER OBJECT FOR REMOVAL.");
             throw new NoSuchItemException("There is not an order on " + date + " with the order number " + orderNumber + ".");
         }
         else{
+            auditDao.writeAuditEntry("ORDER OBJECT FOR REMOVAL EXISTS AND RETRIEVED.");
             return order;
         }
     }
 
     @Override
-    public void removeOrder(Order order) {
+    public void removeOrder(Order order) throws FlooringDaoException {
         dao.removeOrder(order);
+        auditDao.writeAuditEntry("ORDER OBJECT REMOVED FROM COLLECTION.");
     }
 
     @Override
     public void exportAllData() throws FlooringDaoException{
         dao.exportOrderData();
+        auditDao.writeAuditEntry("ORDER DATA EXPORTED TO ORDER TEXT FILES BY DATE.");
     }
 
     @Override
     public void exportBackupData() throws FlooringDaoException {
         dao.exportBackupOrderData();
+        auditDao.writeAuditEntry("ORDER DATA EXPORTED TO BACKUP DATA FILE.");
     }
 
 }

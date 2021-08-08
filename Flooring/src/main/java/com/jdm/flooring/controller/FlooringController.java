@@ -72,6 +72,10 @@ public class FlooringController {
             }
             catch(InvalidInputException e){
                 view.displayErrorMessage(e.getMessage());
+            } 
+            catch (FlooringDaoException e) {
+                view.displayErrorMessage(e.getMessage());
+                done = true;
             }
         }
     }
@@ -104,7 +108,7 @@ public class FlooringController {
                 
                 done = true;
             }
-            catch(DateAlreadyPassedException | TaxCodeViolationException e){
+            catch(DateAlreadyPassedException | FlooringDaoException | TaxCodeViolationException e){
                 view.displayErrorMessage(e.getMessage());
                 done = true;
             }
@@ -126,7 +130,7 @@ public class FlooringController {
             catch(InvalidInputException e){
                 view.displayErrorMessage(e.getMessage());
             }
-            catch(NoSuchItemException e){
+            catch(NoSuchItemException | FlooringDaoException e){
                 view.displayErrorMessage(e.getMessage());
                 return;
             }
@@ -184,7 +188,7 @@ public class FlooringController {
             catch(InvalidInputException e){
                 view.displayErrorMessage(e.getMessage());
             }
-            catch(NoSuchItemException e){
+            catch(NoSuchItemException | FlooringDaoException e){
                 view.displayErrorMessage(e.getMessage());
                 return;
             }
@@ -196,10 +200,17 @@ public class FlooringController {
                     String yesNo = view.getRemoveOrderConfirmation();
                     switch (yesNo) {
                         case "y":
-                            service.removeOrder(order);
-                            view.displayRemoveOrderSuccess();
-                            valid = true;
-                            break;
+                        {
+                            try{
+                                service.removeOrder(order);
+                                view.displayRemoveOrderSuccess();
+                                valid = true;
+                                break;
+                            } 
+                            catch (FlooringDaoException e) {
+                                view.displayErrorMessage(e.getMessage());
+                            }
+                        }
                         case "n":
                             view.displayOrderNotRemoved();
                             valid = true;

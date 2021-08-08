@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 
@@ -62,11 +60,11 @@ public class FlooringDaoFileImpl implements FlooringDao {
         
         File ordersDir = new File(ORDERS_DIR);
         String currentLine;
-        Scanner scanner;
         Order order;
+        
         try{
             for(File ordersFile : ordersDir.listFiles()){
-                scanner = new Scanner(new BufferedReader(new FileReader(ordersFile)));
+                Scanner scanner = new Scanner(new BufferedReader(new FileReader(ordersFile)));
                 scanner.nextLine(); //Ignore header line
                 while(scanner.hasNextLine()){
                     currentLine = scanner.nextLine();
@@ -84,8 +82,7 @@ public class FlooringDaoFileImpl implements FlooringDao {
         catch(FileNotFoundException e){
             throw new FlooringDaoException("Couldn't read order files");
         }
-        
-        
+
     }
 
     private Order unmarshallOrder(String orderAsText){
@@ -101,11 +98,14 @@ public class FlooringDaoFileImpl implements FlooringDao {
     public void exportOrderData() throws FlooringDaoException{
         PrintWriter out;
         String orderAsText;
-
         //Sort orders into HashMap with date as key, list of orders as value
         Map<LocalDate, List<Order>> ordersByDate = getOrdersByDateMap();
         //Per key, write into file with name ORDER_FILE_PREFIX + key as string MMddyyyy 
+        
         try{
+            //Clean the directory in case of removed items
+            cleanDirectory(); 
+            
             for(List<Order> orderList : ordersByDate.values()){
                 //Get the date assosciated with the current list
                 String dateStr = orderList.get(0).getOrderDate()
@@ -323,5 +323,13 @@ public class FlooringDaoFileImpl implements FlooringDao {
                 + order.getMaterialCost() + DELIMITER + order.getLaborCost() + DELIMITER 
                 + order.getTaxCost() + DELIMITER  + order.getTotal() + DELIMITER + order.getOrderDate().format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
         return orderString;
+    }
+
+    private void cleanDirectory() throws IOException{
+       File ordersDir = new File(ORDERS_DIR);
+       
+       for(File file : ordersDir.listFiles()){
+           file.delete();
+       }
     }
 }

@@ -1,4 +1,6 @@
-OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total::OrderDate
-1::Ada Lovelace::CA::25.00::Tile::249.00::3.50::4.15::871.50::1033.35::476.21::2381.06::06-01-2013
-2::Doctor Who::WA::9.25::Wood::243.00::5.15::4.75::1251.45::1154.25::216.51::2622.21::06-02-2013
-3::Albert Einstein::KY::6.00::Carpet::217.00::2.25::2.10::488.25::455.70::56.64::1000.59::06-02-2013
+OrderNumber::CustomerName::State::TaxRate::ProductType::Area::CostPerSquareFoot::LaborCostPerSquareFoot::MaterialCost::LaborCost::Tax::Total::Date
+1::Ada Lovelace::CA::25.000::Tile::249.00::3.500::4.150::871.50::1033.35::476.21::2381.06::06-01-2013
+4::Joe McAdams::TX::4.450::Wood::250.00::5.150::4.750::1287.50::1187.50::110.14::2585.14::03-29-2022
+5::Jo::WA::9.250::Carpet::275.00::2.250::2.100::618.75::577.50::110.65::1306.90::03-28-2022
+6::Test::KY::6.000::Tile::15000.00::3.500::4.150::52500.00::62250.00::6885.00::121635.00::07-22-2022
+7::Joe McAdams::WA::9.250::Tile::275.00::3.500::4.150::962.50::1141.25::194.60::2298.35::07-22-2022

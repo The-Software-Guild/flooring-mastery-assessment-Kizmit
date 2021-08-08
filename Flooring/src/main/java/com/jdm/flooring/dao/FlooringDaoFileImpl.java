@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 
@@ -285,5 +287,41 @@ public class FlooringDaoFileImpl implements FlooringDao {
 
     private Map<LocalDate, List<Order>> getOrdersByDateMap() {
         return getAllOrders().stream().collect(Collectors.groupingBy(order -> order.getOrderDate()));
+    }
+
+    @Override
+    public void exportBackupOrderData() throws FlooringDaoException {
+        PrintWriter out;
+        
+        try{
+            out = new PrintWriter(new FileWriter(BACKUP_ORDER_FILE));
+        } 
+        catch (IOException ex) {
+            throw new FlooringDaoException("Cannot write to file");
+        }
+        //Header line for file
+        out.println("OrderNumber" + DELIMITER + "CustomerName" + DELIMITER + "State" + DELIMITER + "TaxRate" + DELIMITER + "ProductType"
+                + DELIMITER + "Area" + DELIMITER + "CostPerSquareFoot" + DELIMITER + "LaborCostPerSquareFoot"
+                + DELIMITER + "MaterialCost" + DELIMITER + "LaborCost" + DELIMITER + "Tax" + DELIMITER + "Total" + DELIMITER + "Date");
+        out.flush();
+        String orderAsText;
+        List<Order> orderList = this.getAllOrders();
+        for(Order order : orderList){
+            orderAsText = marshallItemDate(order);
+            out.println(orderAsText);
+            out.flush();
+        }
+        
+        out.close();
+    }
+
+    private String marshallItemDate(Order order) {
+                String orderString = order.getOrderNumber() + DELIMITER + order.getCustomerName() + DELIMITER
+                + order.getState() + DELIMITER + order.getTaxRate() + DELIMITER
+                + order.getProductType() + DELIMITER + order.getArea() + DELIMITER 
+                + order.getCostPerSqFt() + DELIMITER + order.getLaborCostPerSqFt() + DELIMITER 
+                + order.getMaterialCost() + DELIMITER + order.getLaborCost() + DELIMITER 
+                + order.getTaxCost() + DELIMITER  + order.getTotal() + DELIMITER + order.getOrderDate().format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+        return orderString;
     }
 }

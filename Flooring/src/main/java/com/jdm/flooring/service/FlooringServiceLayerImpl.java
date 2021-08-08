@@ -221,4 +221,9 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
         dao.exportOrderData();
     }
 
+    @Override
+    public void exportBackupData() throws FlooringDaoException {
+        dao.exportBackupOrderData();
+    }
+
 }

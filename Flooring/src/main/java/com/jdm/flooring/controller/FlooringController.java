@@ -8,6 +8,8 @@ import com.jdm.flooring.service.InvalidInputException;
 import com.jdm.flooring.service.NoSuchItemException;
 import com.jdm.flooring.service.TaxCodeViolationException;
 import com.jdm.flooring.view.FlooringView;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static org.springframework.util.StringUtils.capitalize;
 
 /**
@@ -211,6 +213,12 @@ public class FlooringController {
     }
 
     private void exportBackupData() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try{
+            service.exportBackupData();
+            view.displayBackupSuccess();
+        } 
+        catch (FlooringDaoException e) {
+            view.displayErrorMessage(e.getMessage());
+        }
     }
 }

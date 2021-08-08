@@ -33,5 +33,7 @@ public interface FlooringServiceLayer {
     public void removeOrder(Order order);
 
     public void exportAllData() throws FlooringDaoException;
+
+    public void exportBackupData() throws FlooringDaoException;
     
 }

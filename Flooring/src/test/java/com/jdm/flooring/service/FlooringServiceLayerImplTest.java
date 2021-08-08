@@ -20,6 +20,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class FlooringServiceLayerImplTest {
     private FlooringServiceLayer service;
+    
     public FlooringServiceLayerImplTest() {
         ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
         service = ctx.getBean("service", FlooringServiceLayerImpl.class);

@@ -34,16 +34,19 @@ public class FlooringView {
     }
 
     public void displayOrders(List<Order> orders) {
-        String tableHeader = String.format("%-15s%-15s%-30s%-20s%-45s%-10s", "Order Number",
-                "Date", "Customer Name", "State", "Product Type", "Area(SqFT)");
+        String tableHeader = String.format("%-15s%-15s%-30s%-20s%-45s%-15s%-10s", "Order Number",
+                "Date", "Customer Name", "State", "Product Type", "Area(SqFT)", "Total");
+        io.print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
         io.print(tableHeader);
         for(Order order : orders){
-            String fOrderStr = String.format("%-15s%-15s%-30s%-20s%-45s%-10s", order.getOrderNumber(),
+            String fOrderStr = String.format("%-15s%-15s%-30s%-20s%-45s%-15s$%-10s", order.getOrderNumber(),
                 order.getOrderDate().format(DateTimeFormatter.ofPattern("MM-dd-yyyy")), order.getCustomerName(), order.getState(),
-                order.getProductType(), order.getArea());
+                order.getProductType(), order.getArea(), order.getTotal());
             /*ADD MORE FIELDS TO DISPLAY TO USER ABOUT ORDERS?*/
             io.print(fOrderStr);
         }
+        io.print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
+        io.readString("Press enter to continue.");
     }
 
     public String getDate() {
@@ -59,18 +62,20 @@ public class FlooringView {
     }
     
     public String getState(){
-        return io.readString("Enter your state: ").toLowerCase();
+        return io.readString("Enter your state abbreviation (i.e TX, WA, KY): ").toUpperCase();
     }
     
     public String getProductType(List<Product> products){
         String tableHeader = String.format("%-35s%-35s%-35s", "Product Type",
                 "Cost Per Square Foot", "Labor Cost Per Square Foot");
+        io.print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
         io.print(tableHeader);
         for(Product product : products){
             String fProductStr = String.format("%-35s$%-35s$%-35s", product.getProductType(),
                 product.getCostPerSqFt(), product.getLaborCostPerSqFt());
             io.print(fProductStr);
         }
+        io.print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
         return io.readString("Enter the name of the product type you wish to purchase: ").toLowerCase();
     }
     
@@ -79,8 +84,8 @@ public class FlooringView {
     }
 
     public void displayOrderSummary(Order order) {
-        String fOrderSummaryStr = String.format("%-15s\n%-30s\n%-45s\n%-10s\n%-10s\n", "Date: " + order.getOrderDate().format(DateTimeFormatter.ofPattern("MM-dd-yyyy")), "Order for: " + order.getCustomerName(), 
-                "Product Type: " + order.getProductType(), "Area(SqFT): " + order.getArea(), "Order total: $" + order.getTotal());
+        String fOrderSummaryStr = String.format("%s\n%s\n%s\n%s\n%s\n%s\n", "Date: " + order.getOrderDate().format(DateTimeFormatter.ofPattern("MM-dd-yyyy")), "Order for: " + order.getCustomerName(), 
+                "Product Type: " + order.getProductType(), "Area(SqFT): " + order.getArea(), "State: " + order.getState(), "Order total: $" + order.getTotal());
         io.print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
         io.print("<<ORDER SUMMARY>>");
         io.print(fOrderSummaryStr);
@@ -89,7 +94,7 @@ public class FlooringView {
     }
 
     public String getOrderConfirmation() {
-        return io.readString("Would you like to place the order? (y/n)").toLowerCase();
+        return io.readString("Would you like to submit the order? (y/n)").toLowerCase();
     }
 
     public void displayOrderNotSubmitted() {
@@ -98,5 +103,14 @@ public class FlooringView {
 
     public void displayInvalidChoice() {
         io.print("Invalid input! Please re-enter one of the correct options.");
+    }
+
+    public void displayOrderEditMessage() {
+        io.print("Order(s) to edit found.");
+    }
+
+
+    public String getOrderToEdit() {
+        return io.readString("Enter the order number for the order to edit: ");
     }
 }

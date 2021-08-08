@@ -43,7 +43,7 @@ public class FlooringDaoFileImpl implements FlooringDao {
         this.TAX_FILE = taxFile;
     }
     
-    private List<Order> getAllOrders(){
+    public List<Order> getAllOrders(){
         return new ArrayList<>(ordersMap.values());
     }
     
@@ -138,7 +138,7 @@ public class FlooringDaoFileImpl implements FlooringDao {
         while(scanner.hasNextLine()){
             currentLine = scanner.nextLine();
             tax = unmarshallTax(currentLine);
-            taxMap.put(tax.getStateName(), tax);
+            taxMap.put(tax.getStateAbbrev(), tax);
         }
         
         scanner.close();
@@ -181,6 +181,30 @@ public class FlooringDaoFileImpl implements FlooringDao {
     @Override
     public boolean checkProductType(String productType){
         return productMap.containsKey(productType);
+    }
+
+    @Override
+    public Order getOrderByNameDate(String date, String customerName) {
+        List<Order> orderList = getAllOrders().stream().filter((ord) -> ord.getOrderDate().equals(LocalDate.parse(date, DateTimeFormatter.ofPattern("MM-dd-yyyy"))) 
+                && ord.getCustomerName().equals(customerName)).collect(Collectors.toList());
+        Order order = null;
+        if(!orderList.isEmpty()){
+            order = orderList.get(0);
+        }
+        return order;
+    }
+
+    @Override
+    public void updateOrder(Order order) {
+        ordersMap.replace(order.getOrderNumber(), order);
+    }
+
+    @Override
+    public void recalculateOrder(Order order) {
+        order.setCostPerSqFt(productMap.get(order.getProductType()).getCostPerSqFt());
+        order.setLaborCostPerSqFt(productMap.get(order.getProductType()).getLaborCostPerSqFt());
+        order.setTaxRate(taxMap.get(order.getState()).getTaxRate());
+        order.recalculate();
     }
 
 

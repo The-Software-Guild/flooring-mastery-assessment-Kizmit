@@ -17,6 +17,8 @@ import java.util.List;
  */
 public interface FlooringDao {
 
+    public List<Order> getAllOrders();
+    
     public List<Order> getOrdersByDate(LocalDate date);
     
     public void importOrderData() throws FlooringDaoException;
@@ -34,5 +36,11 @@ public interface FlooringDao {
     public List<Product> getProducts();
 
     public boolean checkProductType(String productType);
+
+    public Order getOrderByNameDate(String date, String customerName);
+
+    public void updateOrder(Order order);
+
+    public void recalculateOrder(Order order);
 
 }

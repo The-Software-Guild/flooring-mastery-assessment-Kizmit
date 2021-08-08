@@ -163,6 +163,11 @@ public class Order {
         total = total.setScale(2, RoundingMode.HALF_UP);
     }
 
+    public void recalculate() {
+        setCalculableValues();
+        setBigDecimalScale();
+    }
+
 
     
 

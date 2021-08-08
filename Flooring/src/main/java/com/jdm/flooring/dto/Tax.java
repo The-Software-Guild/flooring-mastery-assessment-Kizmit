@@ -15,17 +15,17 @@ import java.math.BigDecimal;
  * 
  */
 public class Tax {
-    private final String stateAbbrev, stateName;
+    private final String stateAbbreviation, stateName;
     private final BigDecimal taxRate;
 
     public Tax(String stateAbbrev, String stateName, BigDecimal taxRate) {
-        this.stateAbbrev = stateAbbrev;
+        this.stateAbbreviation = stateAbbrev;
         this.stateName = stateName;
         this.taxRate = taxRate;
     }
     
     public String getStateAbbrev() {
-        return stateAbbrev;
+        return stateAbbreviation;
     }
 
     public String getStateName() {

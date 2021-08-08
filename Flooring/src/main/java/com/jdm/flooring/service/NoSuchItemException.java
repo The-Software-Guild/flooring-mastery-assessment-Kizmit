@@ -12,9 +12,9 @@ package com.jdm.flooring.service;
  * @email joedmcadams@gmail.com
  * 
  */
-public class DateFormatException extends Exception{
+public class NoSuchItemException extends Exception {
 
-    public DateFormatException(String message) {
+    public NoSuchItemException(String message) {
         super(message);
     }
 

@@ -84,7 +84,7 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
         }
         //Verify state exists in tax file
         else if(!dao.checkTaxCode(state)){
-            throw new TaxCodeViolationException("We cannot sell products in your state.");
+            throw new TaxCodeViolationException("State entered is not present in the tax code file.");
         }
         //Verify areaStr is a positive decimal value
         else if(area.compareTo(new BigDecimal("0")) <= 0){

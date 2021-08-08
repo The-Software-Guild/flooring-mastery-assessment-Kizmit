@@ -8,8 +8,6 @@ import com.jdm.flooring.service.InvalidInputException;
 import com.jdm.flooring.service.NoSuchItemException;
 import com.jdm.flooring.service.TaxCodeViolationException;
 import com.jdm.flooring.view.FlooringView;
-import java.util.List;
-import java.util.stream.Collectors;
 import static org.springframework.util.StringUtils.capitalize;
 
 /**
@@ -44,7 +42,7 @@ public class FlooringController {
                         editOrder();
                         break;
                     case 4:
-                        //Remove an order
+                        removeOrder();
                     case 5:
                         //Export data
                     case 6:
@@ -96,7 +94,11 @@ public class FlooringController {
                 }while(!valid);
                 done = true;
             }
-            catch(DateAlreadyPassedException | InvalidInputException | TaxCodeViolationException e){
+            catch(DateAlreadyPassedException | TaxCodeViolationException e){
+                view.displayErrorMessage(e.getMessage());
+                done = true;
+            }
+            catch(InvalidInputException e){
                 view.displayErrorMessage(e.getMessage());
             }
         }
@@ -154,6 +156,10 @@ public class FlooringController {
                 done = true;
             }
         }
+    }
+
+    private void removeOrder() {
+        
     }
 
 

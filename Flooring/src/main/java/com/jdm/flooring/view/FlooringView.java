@@ -96,9 +96,13 @@ public class FlooringView {
     public String getOrderConfirmation() {
         return io.readString("Would you like to submit the order? (y/n)").toLowerCase();
     }
+    
+    public String getRemoveOrderConfirmation() {
+        return io.readString("Would you like to remove the order? (y/n)").toLowerCase();
+    }
 
     public void displayOrderNotSubmitted() {
-        io.print("Your order has not been submitted.");
+        io.print("Order has not been submitted.");
     }
 
     public void displayInvalidChoice() {
@@ -109,8 +113,28 @@ public class FlooringView {
         io.print("Order(s) to edit found.");
     }
 
-
-    public String getOrderToEdit() {
-        return io.readString("Enter the order number for the order to edit: ");
+    public String getOrderNumber() {
+        return io.readString("Enter the order number: ");
     }
+
+    public void displayRemoveOrderSuccess() {
+        io.print("Order removed successfully.");
+    }
+
+    public void displayOrderNotRemoved() {
+        io.print("Order was not removed.");
+    }
+    
+    public void displayOrderNumber(String orderNumber){
+        io.print("The unique order number is: " + orderNumber);
+    }
+
+    public void displayOrderEditInstructions() {
+        io.print("Enter in the details of the order you wish to change. If you do not wish to change a certain field, leave it blank and press enter.");
+    }
+    
+    public void displayOrderSubmissionSuccess(){
+        io.print("Order was submitted successfully.");
+    }
+
 }

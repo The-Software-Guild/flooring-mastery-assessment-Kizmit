@@ -29,7 +29,7 @@ public interface FlooringDao {
     
     public Order createOrder(String date, String customerName, String state, String productType, BigDecimal area);
     
-    public void addOrder(Order newOrder);
+    public String addOrder(Order newOrder);
 
     public boolean checkTaxCode(String state);
 
@@ -42,5 +42,9 @@ public interface FlooringDao {
     public void updateOrder(Order order);
 
     public void recalculateOrder(Order order);
+
+    public Order getOrderByOrderNumberDate(String orderNumber, String date);
+
+    public void removeOrder(Order order);
 
 }

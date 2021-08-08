@@ -101,8 +101,8 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
     }
     
     @Override
-    public void submitOrder(Order order){
-        dao.addOrder(order);
+    public String submitOrder(Order order){
+        return dao.addOrder(order);
     }
 
     @Override
@@ -137,15 +137,14 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
         BigDecimal area;
         
         //Convert string to BigDecimal
-        if(!areaStr.equals("")){
-            area = new BigDecimal(areaStr); 
+        if(areaStr.equals("")){
+            area = order.getArea(); 
         }
-        else if (!areaStr.matches(VALID_AREA_REGEX)){
+        else if (!areaStr.equals("") && !areaStr.matches(VALID_AREA_REGEX)){
             throw new InvalidInputException("Invalid input for area.");
         }
-        //Placeholder BigDecimal value for empty areaStr
-        else{ 
-            area = new BigDecimal("1");
+        else{
+            area = new BigDecimal(areaStr);
         }
         
         //Input validation for customerName (not blank, only valid characters)
@@ -189,6 +188,33 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
     @Override
     public void changeOrder(Order order) {
         dao.updateOrder(order);
+    }
+
+    @Override
+    public Order getOrderToRemove(String date, String orderNumber) throws InvalidInputException, NoSuchItemException{
+        //Validate date format
+        if(!date.matches(VALID_DATE_REGEX)) {
+            throw new InvalidInputException("Invalid date format.");
+        }
+        //Input validation for customer customerName (not blank, only valid characters)
+        else if(!date.matches(VALID_DATE_REGEX)){
+            throw new InvalidInputException("The date entered is invalid.");
+        }
+        
+        Order order = dao.getOrderByOrderNumberDate(orderNumber, date);
+        
+        //Does the order exist
+        if(order == null){
+            throw new NoSuchItemException("There is not an order on " + date + " with the order number " + orderNumber + ".");
+        }
+        else{
+            return order;
+        }
+    }
+
+    @Override
+    public void removeOrder(Order order) {
+        dao.removeOrder(order);
     }
 
 }

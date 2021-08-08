@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.jdm.flooring.dao;
 
 import com.jdm.flooring.dto.Order;
@@ -151,7 +145,7 @@ public class FlooringDaoFileImpl implements FlooringDao {
     }
 
     @Override
-    public void addOrder(Order newOrder) {
+    public String addOrder(Order newOrder) {
         //Get the highest order number and create a new one based off of it (by adding 1)
         Order order = getAllOrders().stream().max(Comparator.comparing(var -> var.getOrderNumber())).get();
         int orderNumberInt = Integer.parseInt(order.getOrderNumber()) + 1;
@@ -160,6 +154,9 @@ public class FlooringDaoFileImpl implements FlooringDao {
         //Assign the new order number to a newly placed order and add the order to the map
         newOrder.setOrderNumber(newOrderNumber);
         ordersMap.put(newOrder.getOrderNumber(), newOrder);
+        
+        //Return the newly generated order number to display
+        return newOrderNumber;
     }
 
     @Override
@@ -207,6 +204,18 @@ public class FlooringDaoFileImpl implements FlooringDao {
         order.recalculate();
     }
 
+    @Override
+    public Order getOrderByOrderNumberDate(String orderNumber, String date) {
+        if(ordersMap.containsKey(orderNumber) && ordersMap.get(orderNumber).getOrderDate().equals(LocalDate.parse(date, DateTimeFormatter.ofPattern("MM-dd-yyyy")))){
+            return ordersMap.get(orderNumber);
+        }
+        else{
+            return null;
+        }
+    }
 
-
+    @Override
+    public void removeOrder(Order order) {
+        ordersMap.remove(order.getOrderNumber());
+    }
 }

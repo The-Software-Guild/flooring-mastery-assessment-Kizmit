@@ -43,6 +43,7 @@ public class FlooringController {
                         break;
                     case 4:
                         removeOrder();
+                        break;
                     case 5:
                         //Export data
                     case 6:
@@ -79,19 +80,23 @@ public class FlooringController {
                 boolean valid;
                 do{
                     String yesNo = view.getOrderConfirmation();
-                    if(yesNo.equals("y")) {
-                        service.submitOrder(order);
-                        valid = true;
-                    }
-                    else if(yesNo.equals("n")){
-                        view.displayOrderNotSubmitted();
-                        valid = true;
-                    }
-                    else{
-                        view.displayInvalidChoice();
-                        valid =  false;
+                    switch (yesNo) {
+                        case "y":
+                            view.displayOrderNumber(service.submitOrder(order));
+                            view.displayOrderSubmissionSuccess();
+                            valid = true;
+                            break;
+                        case "n":
+                            view.displayOrderNotSubmitted();
+                            valid = true;
+                            break;
+                        default:
+                            view.displayInvalidChoice();
+                            valid =  false;
+                            break;
                     }
                 }while(!valid);
+                
                 done = true;
             }
             catch(DateAlreadyPassedException | TaxCodeViolationException e){
@@ -118,7 +123,7 @@ public class FlooringController {
             }
             catch(NoSuchItemException e){
                 view.displayErrorMessage(e.getMessage());
-                done = true;
+                return;
             }
         }
         
@@ -127,22 +132,26 @@ public class FlooringController {
             try{
                 view.displayOrderEditMessage();
                 view.displayOrderSummary(order);
+                view.displayOrderEditInstructions();
                 order = service.editOrder(order, view.getName(), view.getState(), capitalize(view.getProductType(service.getProducts())), view.getArea());
                 view.displayOrderSummary(order);
                 boolean valid;
                 do{
                     String yesNo = view.getOrderConfirmation();
-                    if(yesNo.equals("y")) {
-                        service.changeOrder(order);
-                        valid = true;
-                    }
-                    else if(yesNo.equals("n")){
-                        view.displayOrderNotSubmitted();
-                        valid = true;
-                    }
-                    else{
-                        view.displayInvalidChoice();
-                        valid =  false;
+                    switch (yesNo) {
+                        case "y":
+                            service.changeOrder(order);
+                            view.displayOrderSubmissionSuccess();
+                            valid = true;
+                            break;
+                        case "n":
+                            view.displayOrderNotSubmitted();
+                            valid = true;
+                            break;
+                        default:
+                            view.displayInvalidChoice();
+                            valid =  false;
+                            break;
                     }
                 }while(!valid);
                 done = true;
@@ -159,8 +168,42 @@ public class FlooringController {
     }
 
     private void removeOrder() {
+        Order order = null;
+        boolean done = false;
         
+        while(!done){
+            try{
+                order = service.getOrderToRemove(view.getDate(), view.getOrderNumber());
+                done = true;
+            }
+            catch(InvalidInputException e){
+                view.displayErrorMessage(e.getMessage());
+            }
+            catch(NoSuchItemException e){
+                view.displayErrorMessage(e.getMessage());
+                return;
+            }
+        }
+        
+        boolean valid;
+                do{
+                    view.displayOrderSummary(order);
+                    String yesNo = view.getRemoveOrderConfirmation();
+                    switch (yesNo) {
+                        case "y":
+                            service.removeOrder(order);
+                            view.displayRemoveOrderSuccess();
+                            valid = true;
+                            break;
+                        case "n":
+                            view.displayOrderNotRemoved();
+                            valid = true;
+                            break;
+                        default:
+                            view.displayInvalidChoice();
+                            valid =  false;
+                            break;
+                    }
+                }while(!valid);
     }
-
-
 }

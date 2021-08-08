@@ -16,7 +16,7 @@ public interface FlooringServiceLayer {
     public Order createOrder(String date, String customerName, String state, String productType, String area)  throws DateAlreadyPassedException, 
             InvalidInputException, TaxCodeViolationException;
     
-    public void submitOrder(Order order);
+    public String submitOrder(Order order);
     
     public List<Product> getProducts();
     
@@ -27,5 +27,9 @@ public interface FlooringServiceLayer {
     public Order editOrder(Order order, String name, String capitalize, String capitalize0, String area) throws InvalidInputException, TaxCodeViolationException;
 
     public void changeOrder(Order order);
+
+    public Order getOrderToRemove(String date, String orderNumber) throws InvalidInputException, NoSuchItemException;
+
+    public void removeOrder(Order order);
     
 }

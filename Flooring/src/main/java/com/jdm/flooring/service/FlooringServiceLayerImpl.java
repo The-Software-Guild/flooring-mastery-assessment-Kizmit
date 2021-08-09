@@ -18,8 +18,8 @@ import java.util.List;
  * 
  */
 public class FlooringServiceLayerImpl implements FlooringServiceLayer {
-    private FlooringDao dao;
-    private FlooringAuditDao auditDao;
+    private final FlooringDao dao;
+    private final FlooringAuditDao auditDao;
     
     private static final String VALID_DATE_REGEX = "^(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])-[0-9]{4}$";
     private static final String VALID_NAME_REGEX = "^[A-Za-z\\s,.`]+$";
@@ -105,7 +105,7 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
     }
     
     @Override
-    public String submitOrder(Order order) throws FlooringDaoException{
+    public int submitOrder(Order order) throws FlooringDaoException{
         auditDao.writeAuditEntry("ORDER VERIFIED AND SUBMITTED");
         return dao.addOrder(order);
     }

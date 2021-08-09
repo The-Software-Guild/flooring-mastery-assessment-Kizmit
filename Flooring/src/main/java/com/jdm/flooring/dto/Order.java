@@ -17,7 +17,8 @@ import java.time.LocalDate;
  * 
  */
 public class Order {
-    private String orderNumber, customerName, state, productType;
+    private int orderNumber;
+    private String customerName, state, productType;
     private BigDecimal taxRate, costPerSqFt, laborCostPerSqFt, area, materialCost, laborCost, taxCost, total;
     private LocalDate orderDate;
     
@@ -49,7 +50,7 @@ public class Order {
             String productType, BigDecimal area, BigDecimal costPerSqFt, BigDecimal laborCostPerSqFt, 
             BigDecimal materialCost, BigDecimal laborCost, BigDecimal taxCost, 
             BigDecimal total) {
-        this.orderNumber = orderNumber;
+        this.orderNumber = Integer.parseInt(orderNumber);
         this.customerName = customerName;
         this.state = state;
         this.productType = productType;
@@ -64,11 +65,11 @@ public class Order {
         setBigDecimalScale();
     }
 
-    public String getOrderNumber() {
+    public int getOrderNumber() {
         return orderNumber;
     }
 
-    public void setOrderNumber(String orderNumber) {
+    public void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
     }
 

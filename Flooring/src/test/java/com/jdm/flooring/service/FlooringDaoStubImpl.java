@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class FlooringDaoStubImpl implements FlooringDao {
     
     public Order order1, order2;
-    private final HashMap<String, Order> ordersMap = new HashMap<>();
+    private final HashMap<Integer, Order> ordersMap = new HashMap<>();
     private final HashMap<String, Product> productMap = new HashMap<>();
     private final HashMap<String, Tax> taxMap = new HashMap<>();
     
@@ -41,8 +41,8 @@ public class FlooringDaoStubImpl implements FlooringDao {
                 taxMap.get("TX").getTaxRate(), productMap.get("Carpet").getCostPerSqFt(), productMap.get("Carpet").getLaborCostPerSqFt());
         order2 = new Order("Test NameTwo", "WA", "Tile", LocalDate.parse("02-02-2222", DateTimeFormatter.ofPattern("MM-dd-yyyy")), new BigDecimal("250.00"), 
                 taxMap.get("WA").getTaxRate(), productMap.get("Tile").getCostPerSqFt(), productMap.get("Tile").getLaborCostPerSqFt());
-        ordersMap.put("1", order1);
-        ordersMap.put("2", order2);
+        ordersMap.put(1, order1);
+        ordersMap.put(2, order2);
     }
     
     @Override
@@ -79,7 +79,7 @@ public class FlooringDaoStubImpl implements FlooringDao {
     }
 
     @Override
-    public String addOrder(Order newOrder) {
+    public int addOrder(Order newOrder) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -124,8 +124,8 @@ public class FlooringDaoStubImpl implements FlooringDao {
 
     @Override
     public Order getOrderByOrderNumberDate(String orderNumber, String date) {
-        if(ordersMap.containsKey(orderNumber) && ordersMap.get(orderNumber).getOrderDate().equals(LocalDate.parse(date, DateTimeFormatter.ofPattern("MM-dd-yyyy")))){
-            return ordersMap.get(orderNumber);
+        if(ordersMap.containsKey(Integer.parseInt(orderNumber)) && ordersMap.get(Integer.parseInt(orderNumber)).getOrderDate().equals(LocalDate.parse(date, DateTimeFormatter.ofPattern("MM-dd-yyyy")))){
+            return ordersMap.get(Integer.parseInt(orderNumber));
         }
         else{
             return null;

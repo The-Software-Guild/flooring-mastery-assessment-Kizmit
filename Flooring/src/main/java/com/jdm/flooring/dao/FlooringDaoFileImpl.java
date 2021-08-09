@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-
-
 /**
  *
  * @author Joe McAdams
@@ -30,7 +28,7 @@ import java.util.stream.Collectors;
  * 
  */
 public class FlooringDaoFileImpl implements FlooringDao {
-    private final HashMap<String, Order> ordersMap = new HashMap<>();
+    private final HashMap<Integer, Order> ordersMap = new HashMap<>();
     private final HashMap<String, Product> productMap = new HashMap<>();
     private final HashMap<String, Tax> taxMap = new HashMap<>();
     private final String PRODUCT_FILE, TAX_FILE, ORDER_FILE_PREFIX ,ORDERS_DIR, BACKUP_ORDER_FILE;
@@ -210,25 +208,26 @@ public class FlooringDaoFileImpl implements FlooringDao {
     }
 
     @Override
-    public String addOrder(Order newOrder) {
-        String newOrderNumber;     
+    public int addOrder(Order newOrder) {
+             
         //Get the highest order number and create a new one based off of it (by adding 1)
         if(!ordersMap.isEmpty()){
             Order order = getAllOrders().stream().max(Comparator.comparing(var -> var.getOrderNumber())).get();
-            int orderNumberInt = Integer.parseInt(order.getOrderNumber()) + 1;
-            newOrderNumber = String.valueOf(orderNumberInt);
+            int orderNumber = order.getOrderNumber() + 1;
+            
 
             //Assign the new order number to a newly placed order and add the order to the map
-            newOrder.setOrderNumber(newOrderNumber);
+            newOrder.setOrderNumber(orderNumber);
             ordersMap.put(newOrder.getOrderNumber(), newOrder);
+            return orderNumber;
         }
         else{
-            newOrderNumber = "1";
-            newOrder.setOrderNumber(newOrderNumber);
+            int orderNumber = 1;
+            newOrder.setOrderNumber(orderNumber);
             ordersMap.put(newOrder.getOrderNumber(), newOrder);
+            return orderNumber;
         }
-        //Return the newly generated order number to display
-        return newOrderNumber;
+
     }
 
     @Override
@@ -279,8 +278,8 @@ public class FlooringDaoFileImpl implements FlooringDao {
 
     @Override
     public Order getOrderByOrderNumberDate(String orderNumber, String date) {
-        if(ordersMap.containsKey(orderNumber) && ordersMap.get(orderNumber).getOrderDate().equals(LocalDate.parse(date, DateTimeFormatter.ofPattern("MM-dd-yyyy")))){
-            return ordersMap.get(orderNumber);
+        if(ordersMap.containsKey(Integer.parseInt(orderNumber)) && ordersMap.get(Integer.parseInt(orderNumber)).getOrderDate().equals(LocalDate.parse(date, DateTimeFormatter.ofPattern("MM-dd-yyyy")))){
+            return ordersMap.get(Integer.parseInt(orderNumber));
         }
         else{
             return null;

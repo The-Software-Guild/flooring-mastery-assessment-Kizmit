@@ -74,9 +74,9 @@ public class FlooringDaoFileImplTest {
         assertEquals(order.getOrderDate(), LocalDate.parse("12-12-2121", DateTimeFormatter.ofPattern("MM-dd-yyyy")));
         assertEquals(order.getCostPerSqFt(), new BigDecimal("5.150"));
         assertEquals(order.getTaxRate(), new BigDecimal("6.000"));
-        String orderNumber = testDao.addOrder(order);
+        int orderNumber = testDao.addOrder(order);
         assertNotNull(orderNumber);
-        assertEquals(orderNumber, "4");
+        assertEquals(orderNumber, 4);
         assertTrue(testDao.getAllOrders().contains(order));
     }
     
@@ -85,7 +85,7 @@ public class FlooringDaoFileImplTest {
         Order order = testDao.getOrderByNameDate("06-01-2013", "Ada Lovelace");
         assertNotNull(order);
         assertEquals(order.getArea(), new BigDecimal("249.00"));
-        assertEquals(order.getOrderNumber(), "1");
+        assertEquals(order.getOrderNumber(), 1);
         assertEquals(order.getState(), "CA");
         assertEquals(order.getTotal(), new BigDecimal("2381.06"));
         order = testDao.getOrderByNameDate("06-05-2130", "Ada Lovelace");

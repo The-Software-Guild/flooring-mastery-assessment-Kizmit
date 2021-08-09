@@ -125,7 +125,7 @@ public class FlooringView {
         io.print("Order was not removed.");
     }
     
-    public void displayOrderNumber(String orderNumber){
+    public void displayOrderNumber(int orderNumber){
         io.print("The unique order number is: " + orderNumber);
     }
 

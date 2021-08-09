@@ -5,8 +5,11 @@
  */
 package com.jdm.flooring.dao;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.jdm.flooring.dto.Order;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,8 +52,55 @@ public class FlooringDaoFileImplTest {
     }
 
     @Test
-    public void testSomeMethod() {
-        fail("The test case is a prototype.");
+    public void testGetAllOrders() {
+        assertNotNull(testDao.getAllOrders());
+        assertEquals(testDao.getAllOrders().size(), 3);
     }
     
+    @Test
+    public void testGetOrdersByDate(){
+        List<Order> ordersByDate = testDao.getOrdersByDate(LocalDate.parse(("06-01-2013"), DateTimeFormatter.ofPattern("MM-dd-yyyy")));
+        assertNotNull(ordersByDate);
+        assertEquals(ordersByDate.size(), 1);
+        assertEquals(ordersByDate.get(0).getState(),  "CA");
+        
+    }
+    
+    @Test
+    public void testCreateAddOrder(){
+        Order order = testDao.createOrder("12-12-2121", "TEST NAME", "KY", "Wood", new BigDecimal("100"));
+        assertNotNull(order);
+        assertEquals(order.getArea(), new BigDecimal("100.00"));
+        assertEquals(order.getOrderDate(), LocalDate.parse("12-12-2121", DateTimeFormatter.ofPattern("MM-dd-yyyy")));
+        assertEquals(order.getCostPerSqFt(), new BigDecimal("5.150"));
+        assertEquals(order.getTaxRate(), new BigDecimal("6.000"));
+        String orderNumber = testDao.addOrder(order);
+        assertNotNull(orderNumber);
+        assertEquals(orderNumber, "4");
+        assertTrue(testDao.getAllOrders().contains(order));
+    }
+    
+    @Test
+    public void testGetOrderByNameDate(){
+        Order order = testDao.getOrderByNameDate("06-01-2013", "Ada Lovelace");
+        assertNotNull(order);
+        assertEquals(order.getArea(), new BigDecimal("249.00"));
+        assertEquals(order.getOrderNumber(), "1");
+        assertEquals(order.getState(), "CA");
+        assertEquals(order.getTotal(), new BigDecimal("2381.06"));
+        order = testDao.getOrderByNameDate("06-05-2130", "Ada Lovelace");
+        assertNull(order);
+        order = testDao.getOrderByNameDate("06-01-2013", "Ada Hatelace");
+        assertNull(order);
+    }
+    
+    @Test
+    public void testRemoveOrder(){
+        Order order = testDao.createOrder("12-12-2121", "TEST NAME", "KY", "Wood", new BigDecimal("100"));
+        testDao.addOrder(order);
+        assertTrue(testDao.getAllOrders().contains(order));
+        
+        testDao.removeOrder(order);
+        assertFalse(testDao.getAllOrders().contains(order));
+    }
 }

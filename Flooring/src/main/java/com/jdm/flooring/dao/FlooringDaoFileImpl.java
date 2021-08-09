@@ -307,7 +307,7 @@ public class FlooringDaoFileImpl implements FlooringDao {
         String orderAsText;
         List<Order> orderList = this.getAllOrders();
         for(Order order : orderList){
-            orderAsText = marshallItemDate(order);
+            orderAsText = marshallOrderWithDate(order);
             out.println(orderAsText);
             out.flush();
         }
@@ -315,7 +315,7 @@ public class FlooringDaoFileImpl implements FlooringDao {
         out.close();
     }
 
-    private String marshallItemDate(Order order) {
+    private String marshallOrderWithDate(Order order) {
                 String orderString = order.getOrderNumber() + DELIMITER + order.getCustomerName() + DELIMITER
                 + order.getState() + DELIMITER + order.getTaxRate() + DELIMITER
                 + order.getProductType() + DELIMITER + order.getArea() + DELIMITER 

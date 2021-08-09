@@ -25,6 +25,7 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
     private static final String VALID_NAME_REGEX = "^[A-Za-z\\s,.`]+$";
     private static final String VALID_STATE_REGEX = "^[A-Z][A-Z]+$";
     private static final String VALID_AREA_REGEX = "^([0-9]+\\.?[0-9]*|\\.[0-9]+)$";
+    private static final String VALID_ORDER_NUMBER_REGEX = "^\\d+$";
     
     public FlooringServiceLayerImpl(FlooringDao dao, FlooringAuditDao auditDao) {
         this.dao = dao;
@@ -90,10 +91,6 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
         //Verify state exists in tax file
         else if(!dao.checkTaxCode(state)){
             throw new TaxCodeViolationException("State entered is not present in the tax code file.");
-        }
-        //Verify areaStr is a positive decimal value
-        else if(area.compareTo(new BigDecimal("0")) <= 0){
-            throw new InvalidInputException("The area value entered is not a positive value.");
         }
         //Verify the productType is a valid product 
         else if(!dao.checkProductType(productType)){
@@ -171,10 +168,6 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
         else if(!state.equals("") && !dao.checkTaxCode(state)){
             throw new TaxCodeViolationException("We cannot sell products in your state.");
         }
-        //Verify areaStr is a positive decimal value
-        else if(!areaStr.equals("") && area.compareTo(new BigDecimal("0")) <= 0){
-            throw new InvalidInputException("The area value entered is not a positive value.");
-        }
         //Verify the productType is a valid product 
         else if(!productType.equals("") && !dao.checkProductType(productType)){
             throw new InvalidInputException("The product type entered does not exist.");
@@ -214,8 +207,8 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
             throw new InvalidInputException("Invalid date format.");
         }
         //Input validation for customer customerName (not blank, only valid characters)
-        else if(!date.matches(VALID_DATE_REGEX)){
-            throw new InvalidInputException("The date entered is invalid.");
+        else if(!orderNumber.matches(VALID_ORDER_NUMBER_REGEX)){
+            throw new InvalidInputException("Invalid order number.");
         }
         auditDao.writeAuditEntry("ORDER REMOVAL INPUT VALIDATED, RETRIEVING ORDER OBJECT TO REMOVE.");
         Order order = dao.getOrderByOrderNumberDate(orderNumber, date);

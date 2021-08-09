@@ -19,7 +19,6 @@ public class FlooringAuditDaoStubImpl implements FlooringAuditDao {
 
     @Override
     public void writeAuditEntry(String entry) throws FlooringDaoException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

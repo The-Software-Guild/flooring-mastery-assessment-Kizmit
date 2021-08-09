@@ -211,15 +211,22 @@ public class FlooringDaoFileImpl implements FlooringDao {
 
     @Override
     public String addOrder(Order newOrder) {
+        String newOrderNumber;     
         //Get the highest order number and create a new one based off of it (by adding 1)
-        Order order = getAllOrders().stream().max(Comparator.comparing(var -> var.getOrderNumber())).get();
-        int orderNumberInt = Integer.parseInt(order.getOrderNumber()) + 1;
-        String newOrderNumber = String.valueOf(orderNumberInt);
-        
-        //Assign the new order number to a newly placed order and add the order to the map
-        newOrder.setOrderNumber(newOrderNumber);
-        ordersMap.put(newOrder.getOrderNumber(), newOrder);
-        
+        if(!ordersMap.isEmpty()){
+            Order order = getAllOrders().stream().max(Comparator.comparing(var -> var.getOrderNumber())).get();
+            int orderNumberInt = Integer.parseInt(order.getOrderNumber()) + 1;
+            newOrderNumber = String.valueOf(orderNumberInt);
+
+            //Assign the new order number to a newly placed order and add the order to the map
+            newOrder.setOrderNumber(newOrderNumber);
+            ordersMap.put(newOrder.getOrderNumber(), newOrder);
+        }
+        else{
+            newOrderNumber = "1";
+            newOrder.setOrderNumber(newOrderNumber);
+            ordersMap.put(newOrder.getOrderNumber(), newOrder);
+        }
         //Return the newly generated order number to display
         return newOrderNumber;
     }
